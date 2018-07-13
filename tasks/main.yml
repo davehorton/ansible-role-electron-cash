@@ -17,11 +17,11 @@
   pip:  
     name: PyQt5 
     executable: pip3
-  when: ansible_distribution != 'Ubuntu' or ansible_distribution_major_version > 14 
+  when: ansible_distribution != "Ubuntu" or ansible_distribution_major_version > 14 
 
 - name: install PyQt5
   apt: name=PyQt5 state=latest
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == 14 
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == 14 
 
 - name: make source directory writeable
   file: path=/usr/local/src state=directory mode=0777
