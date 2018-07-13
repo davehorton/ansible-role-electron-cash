@@ -1,4 +1,4 @@
-# ansible-role-electron-cash [![Build Status](https://secure.travis-ci.org/davehorton/ansible-role-electron-cash.png)](http://travis-ci.org/davehorton/ansible-role-electron-cash)
+# ansible-role-electron-cash 
 
 This is an ansible role for building a headless [Electron Cash](https://electroncash.org/). 
 
