@@ -1,0 +1,64 @@
+---
+
+- name: Update apt-cache
+  apt: update_cache=yes 
+
+- name: Install build tools and dependencies
+  apt: name={{ item }} state=latest
+  with_items:
+    - 'gcc'
+    - 'g++'
+    - 'make'
+    - 'build-essential'
+    - 'python3-setuptools'
+    - 'python3-pip'
+
+- name: install PyQt5
+  pip:  
+    name: PyQt5 
+    executable: pip3
+
+- name: make source directory writeable
+  file: path=/usr/local/src state=directory mode=0777
+
+- name: untar the archive
+  unarchive:
+    remote_src: yes
+    creates: /usr/local/src/ElectronCash {{electron_cash_version}}
+    src: https://electroncash.org/downloads/{{electron_cash_version}}/win-linux/ElectronCash-{{electron_cash_version}}.tar.gz
+    dest: /usr/local/src
+  become: no
+
+- name: rename directory to something without spaces (!)
+  command: mv "Electron Cash-{{electron_cash_version}}" ElectronCash-{{electron_cash_version}}
+  args:
+    chdir: /usr/local/src/
+
+- name: install 
+  shell: python3 setup.py install
+  args:
+    chdir: /usr/local/src/ElectronCash-{{electron_cash_version}}
+
+- name: Create systemd unit file
+  template:
+    src: electron-cash.service.j2
+    dest: /etc/systemd/system/electron-cash.service
+    mode: 0644
+    owner: root
+    group: root
+
+- name: systemctl daemon-reload
+  shell: systemctl daemon-reload
+  
+- name: (re)start electron-cash
+  service: name=electron-cash enabled=yes state=restarted
+
+- name: set rpc port
+  shell: /usr/local/bin/electron-cash setconfig rpcport {{electron_cash_rpc_port}}
+
+- name: set rpc user
+  shell: /usr/local/bin/electron-cash setconfig rpcuser {{electron_cash_rpc_user}}
+
+- name: set rpc password
+  shell: /usr/local/bin/electron-cash setconfig rpcpassword {{electron_cash_rpc_password}}
+

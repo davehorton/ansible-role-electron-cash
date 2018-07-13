@@ -1,0 +1,5 @@
+---
+electron_cash_version: 3.3
+electron_cash_rpc_port: 7777
+electron_cash_rpc_user: user
+electron_cash_rpc_password: changeme
